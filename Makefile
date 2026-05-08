@@ -5,22 +5,14 @@ TEST_DIR := test
 
 .PHONY: build clean copy-plugin test
 
-build: copy-plugin
-	cd $(FIRMWARE_DIR) && ./fbt fap_bambu_parser
-	mkdir -p dist
-	@FAL_FILE=$$(find $(FIRMWARE_DIR)/build -name "bambu_parser.fal" 2>/dev/null | head -1); \
-	if [ -n "$$FAL_FILE" ]; then \
-		cp "$$FAL_FILE" dist/; \
-		echo "Plugin built: dist/bambu_parser.fal"; \
-	else \
-		echo "ERROR: bambu_parser.fal not found in build directory"; \
-		exit 1; \
-	fi
+build:
+	ufbt
 
 copy-plugin:
 	cp $(PLUGIN_DIR)/bambu.c $(NFC_PLUGINS_DIR)/
 	cp $(PLUGIN_DIR)/bambu_filaments.h $(NFC_PLUGINS_DIR)/
 	cp $(PLUGIN_DIR)/bambu_parser.h $(NFC_PLUGINS_DIR)/
+	cp $(PLUGIN_DIR)/nfc_supported_card_plugin.h $(NFC_PLUGINS_DIR)/
 	@if ! grep -q "bambu_parser" $(FIRMWARE_DIR)/applications/main/nfc/application.fam; then \
 		echo "" >> $(FIRMWARE_DIR)/applications/main/nfc/application.fam; \
 		echo "App(" >> $(FIRMWARE_DIR)/applications/main/nfc/application.fam; \
@@ -39,6 +31,7 @@ clean:
 	rm -f $(NFC_PLUGINS_DIR)/bambu.c
 	rm -f $(NFC_PLUGINS_DIR)/bambu_filaments.h
 	rm -f $(NFC_PLUGINS_DIR)/bambu_parser.h
+	rm -f $(NFC_PLUGINS_DIR)/nfc_supported_card_plugin.h
 	rm -f $(TEST_DIR)/test_bambu
 
 test: $(TEST_DIR)/test_bambu

@@ -3,6 +3,10 @@ flipperzero-firmware/build/
 flipperzero-firmware/dist/
 flipperzero-firmware/toolchain/
 
+# Local tools
+.venv/
+.vscode/
+
 # Distribution output
 dist/
 

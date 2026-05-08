@@ -414,26 +414,19 @@ static bool bambu_parse(const NfcDevice* device, FuriString* parsed_data) {
     furi_string_cat_printf(parsed_data, "\e#Bambu Lab Filament\n");
     furi_string_cat_printf(parsed_data, "Type: %s\n", detailed_type);
 
-    // Display color: show name with hex if available, otherwise just hex
-    // For hex code: show 6-digit if fully opaque, otherwise show "#RRGGBB @ XX%"
-    if(filament_info != NULL) {
-        if(color_a == 0xFF) {
-            furi_string_cat_printf(parsed_data, "Color: %s (#%02X%02X%02X)\n",
-                                  filament_info->color_name, color_r, color_g, color_b);
-        } else {
-            uint8_t alpha_percent = (color_a * 100) / 255;
-            furi_string_cat_printf(parsed_data, "Color: %s (#%02X%02X%02X @ %u%%)\n",
-                                  filament_info->color_name, color_r, color_g, color_b, alpha_percent);
-        }
+    // Display the tag's raw color first, then the Bambu color name from the lookup table.
+    if(color_a == 0xFF) {
+        furi_string_cat_printf(parsed_data, "Hex Code: #%02X%02X%02X\n", color_r, color_g, color_b);
     } else {
-        if(color_a == 0xFF) {
-            furi_string_cat_printf(parsed_data, "Color: #%02X%02X%02X\n",
-                                  color_r, color_g, color_b);
-        } else {
-            uint8_t alpha_percent = (color_a * 100) / 255;
-            furi_string_cat_printf(parsed_data, "Color: #%02X%02X%02X @ %u%%\n",
-                                  color_r, color_g, color_b, alpha_percent);
-        }
+        uint8_t alpha_percent = (color_a * 100) / 255;
+        furi_string_cat_printf(
+            parsed_data, "Hex Code: #%02X%02X%02X @ %u%%\n", color_r, color_g, color_b, alpha_percent);
+    }
+
+    if(filament_info != NULL) {
+        furi_string_cat_printf(parsed_data, "Bambu Color: %s\n", filament_info->color_name);
+    } else {
+        furi_string_cat_printf(parsed_data, "Bambu Color: Unknown (update lookup table)\n");
     }
 
     if(filament_info != NULL) {

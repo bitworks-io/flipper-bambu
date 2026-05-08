@@ -29,12 +29,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Checkout flipperzero-firmware submodule
-        run: |
-          git submodule update --init flipperzero-firmware
-          cd flipperzero-firmware
-          git submodule update --init --depth 1
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -43,16 +37,16 @@ jobs:
       - name: Cache Flipper toolchain
         uses: actions/cache@v4
         with:
-          path: flipperzero-firmware/toolchain
+          path: ~/.ufbt/toolchain
           key: flipper-toolchain-${{ runner.os }}-v2
           restore-keys: |
             flipper-toolchain-${{ runner.os }}-
 
+      - name: Install uFBT
+        run: python -m pip install ufbt SCons ansi
+
       - name: Build Bambu parser plugin
-        env:
-          FBT_NO_SYNC: 1
-          FBT_GIT_SUBMODULE_SHALLOW: 1
-        run: make build
+        run: ufbt
 
       - name: Upload artifact to release
         env:

@@ -1,0 +1,12 @@
+App(
+    appid="nfc",
+    apptype=FlipperAppType.APP,
+)
+
+App(
+    appid="bambu_parser",
+    apptype=FlipperAppType.PLUGIN,
+    entry_point="bambu_plugin_ep",
+    requires=["nfc"],
+    sources=["plugin/bambu.c"],
+)
